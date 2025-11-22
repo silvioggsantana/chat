@@ -1,2 +1,228 @@
-# chat
-este é um desafio tecnico de uma vaga para desenvolvedor fullstack
+# Chatbot de Atendimento Simulado - 4blue
+
+Protótipo fullstack de um sistema de chat desenvolvido como parte do processo seletivo da 4blue.
+
+## 📋 Descrição do Projeto
+
+Este projeto implementa um chatbot de atendimento simulado com as seguintes funcionalidades:
+
+- **Login Mockado**: Seleção entre "Usuário A" ou "Usuário B" sem autenticação complexa
+- **Tela de Chat**: Interface para enviar mensagens e receber respostas simuladas do backend
+- **Tela de Histórico**: Visualização do histórico de mensagens filtrado por usuário
+
+## 🚀 Tecnologias Utilizadas
+
+### Backend
+- **Python 3.11**
+- **Django 5.2.8**
+- **Django REST Framework 3.16.1**
+- **django-cors-headers 4.9.0**
+- **SQLite** (banco de dados padrão do Django)
+
+### Frontend
+- **React 18**
+- **React Router DOM** (navegação entre páginas)
+- **Axios** (requisições HTTP)
+- **CSS3** (estilização)
+
+### Controle de Versão
+- **Git**
+
+## 📁 Estrutura do Projeto
+
+```
+chatbot-4blue/
+├── backend/
+│   ├── chatbot_project/
+│   │   ├── settings.py
+│   │   ├── urls.py
+│   │   └── ...
+│   ├── chat/
+│   │   ├── models.py          # Modelo Message
+│   │   ├── serializers.py     # Serializer para API
+│   │   ├── views.py           # ViewSet com endpoints
+│   │   └── urls.py            # Rotas da API
+│   ├── manage.py
+│   ├── requirements.txt
+│   └── db.sqlite3
+├── frontend/
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── Login.js       # Componente de login
+│   │   │   ├── Chat.js        # Componente do chat
+│   │   │   ├── History.js     # Componente de histórico
+│   │   │   └── *.css          # Estilos dos componentes
+│   │   ├── App.js
+│   │   └── ...
+│   ├── package.json
+│   └── ...
+└── README.md
+```
+
+## 🔧 Como Configurar e Rodar o Projeto
+
+### Pré-requisitos
+- Python 3.11+
+- Node.js 18+
+- npm ou yarn
+- Git
+
+### 1. Clonar o Repositório
+
+```bash
+git clone <url-do-repositorio>
+cd chatbot-4blue
+```
+
+### 2. Configurar o Backend
+
+```bash
+# Navegar para o diretório do backend
+cd backend
+
+# Criar ambiente virtual
+python3.11 -m venv venv
+
+# Ativar o ambiente virtual
+# No Linux/Mac:
+source venv/bin/activate
+# No Windows:
+# venv\Scripts\activate
+
+# Instalar dependências
+pip install -r requirements.txt
+
+# Aplicar migrações do banco de dados
+python manage.py migrate
+
+# Rodar o servidor Django
+python manage.py runserver
+```
+
+O backend estará rodando em `http://localhost:8000`
+
+### 3. Configurar o Frontend
+
+```bash
+# Em outro terminal, navegar para o diretório do frontend
+cd frontend
+
+# Instalar dependências
+npm install
+
+# Rodar o servidor de desenvolvimento
+npm start
+```
+
+O frontend estará rodando em `http://localhost:3000`
+
+## 🎯 Como Usar a Aplicação
+
+1. Acesse `http://localhost:3000` no navegador
+2. Selecione um perfil de usuário (A ou B) e clique em "Entrar"
+3. Na tela de chat, digite uma mensagem e clique em "Enviar"
+4. O sistema retornará uma resposta simulada personalizada para cada usuário
+5. Clique em "Ver Histórico" para visualizar todas as mensagens enviadas pelo usuário atual
+6. No histórico, você pode ver a data/hora de cada mensagem e suas respectivas respostas
+
+## 📡 Endpoints da API
+
+### POST `/api/messages/`
+Cria uma nova mensagem e retorna uma resposta simulada.
+
+**Request Body:**
+```json
+{
+  "user": "A",
+  "message": "Olá, preciso de ajuda!"
+}
+```
+
+**Response:**
+```json
+{
+  "id": 1,
+  "user": "A",
+  "message": "Olá, preciso de ajuda!",
+  "response": "Obrigado por seu contato, Usuário A! Recebi sua mensagem: 'Olá, preciso de ajuda!'. Em breve responderemos.",
+  "created_at": "2025-11-21T10:30:00Z"
+}
+```
+
+### GET `/api/messages/history/?user=A`
+Retorna o histórico de mensagens filtrado por usuário.
+
+**Response:**
+```json
+[
+  {
+    "id": 2,
+    "user": "A",
+    "message": "Segunda mensagem",
+    "response": "Obrigado por seu contato, Usuário A! Recebi sua mensagem: 'Segunda mensagem'. Em breve responderemos.",
+    "created_at": "2025-11-21T10:35:00Z"
+  },
+  {
+    "id": 1,
+    "user": "A",
+    "message": "Primeira mensagem",
+    "response": "Obrigado por seu contato, Usuário A! Recebi sua mensagem: 'Primeira mensagem'. Em breve responderemos.",
+    "created_at": "2025-11-21T10:30:00Z"
+  }
+]
+```
+
+## 🏗️ Decisões Técnicas
+
+### Modelagem de Dados
+O modelo `Message` foi estruturado com os seguintes campos:
+- `user`: CharField com choices ('A' ou 'B') para identificar o usuário
+- `message`: TextField para armazenar a mensagem enviada
+- `response`: TextField para armazenar a resposta simulada
+- `created_at`: DateTimeField com auto_now_add para timestamp automático
+
+Esta estrutura permite armazenar tanto a mensagem quanto a resposta em um único registro, facilitando a consulta do histórico completo.
+
+### Gerenciamento de Estado no React
+Utilizei o hook `useState` para gerenciar:
+- O usuário ativo (compartilhado via props entre componentes)
+- O histórico de mensagens na tela de chat
+- O estado de loading durante requisições
+
+O React Router DOM foi escolhido para navegação entre as páginas, com proteção de rotas para garantir que apenas usuários "logados" acessem o chat e histórico.
+
+### Respostas Simuladas
+As respostas são geradas no backend (views.py) de forma personalizada para cada usuário, simulando um sistema real de atendimento. Cada usuário recebe uma resposta com formato diferente, demonstrando a capacidade de personalização.
+
+### CORS
+Configurei o django-cors-headers para permitir requisições do frontend (localhost:3000) ao backend (localhost:8000), essencial para o desenvolvimento local.
+
+### Estilização
+Optei por CSS puro com um design moderno e responsivo, utilizando gradientes e transições para melhorar a experiência do usuário. As cores foram escolhidas para criar uma interface profissional e agradável.
+
+## ✅ Requisitos Atendidos
+
+- ✅ Login mockado com seleção de usuário (A ou B)
+- ✅ Estado do usuário gerenciado no React
+- ✅ Tela de chat funcional com envio de mensagens
+- ✅ API Django que salva mensagens no banco de dados
+- ✅ Respostas mockadas personalizadas por usuário
+- ✅ Exibição de mensagens e respostas na interface
+- ✅ Tela de histórico com filtragem por usuário
+- ✅ Histórico atualizado conforme o usuário selecionado
+- ✅ Código organizado e bem documentado
+- ✅ README.md completo com instruções
+
+## 📝 Observações
+
+- O projeto utiliza SQLite por ser o banco de dados padrão do Django, ideal para desenvolvimento e testes
+- As respostas são simuladas no backend, mas a estrutura permite fácil integração com sistemas reais de IA ou chatbot
+- O código está preparado para expansão futura, como adicionar autenticação real, mais tipos de usuários, ou integração com APIs externas
+
+## 👨‍💻 Autor
+
+Desenvolvido como parte do processo seletivo da 4blue.
+
+---
+
+**Contato**: marcelosilva@4blue.com.br
