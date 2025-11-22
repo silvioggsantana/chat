@@ -56,3 +56,14 @@ class MessageViewSet(viewsets.ModelViewSet):
         messages = Message.objects.filter(user=user).order_by('-created_at')
         serializer = self.get_serializer(messages, many=True)
         return Response(serializer.data)
+
+    @action(detail=False, methods=['get'])
+    def conversation(self, request):
+        """
+        Retorna todas as mensagens de A e B, ordenadas por data.
+        Usado para simular a conversa completa no chat.
+        """
+        # Filtra todas as mensagens de A e B
+        messages = Message.objects.filter(user__in=['A', 'B']).order_by('created_at')
+        serializer = self.get_serializer(messages, many=True)
+        return Response(serializer.data)
