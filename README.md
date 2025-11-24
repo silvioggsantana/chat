@@ -174,55 +174,28 @@ Retorna o histórico de mensagens filtrado por usuário.
 
 ## 🏗️ Decisões Técnicas
 
-### Modelagem de Dados
-O modelo `Message` foi estruturado com os seguintes campos:
-- `user`: CharField com choices ('A' ou 'B') para identificar o usuário
-- `message`: TextField para armazenar a mensagem enviada
-- `response`: TextField para armazenar a resposta simulada
-- `created_at`: DateTimeField com auto_now_add para timestamp automático
-
-Esta estrutura permite armazenar tanto a mensagem quanto a resposta em um único registro, facilitando a consulta do histórico completo.
-
-### Gerenciamento de Estado no React
-Utilizei o hook `useState` para gerenciar:
-- O usuário ativo (compartilhado via props entre componentes)
-- O histórico de mensagens na tela de chat
-- O estado de loading durante requisições
-
-O React Router DOM foi escolhido para navegação entre as páginas, com proteção de rotas para garantir que apenas usuários "logados" acessem o chat e histórico.
-
-### Respostas Simuladas
-As respostas são geradas no backend (views.py) de forma personalizada para cada usuário, simulando um sistema real de atendimento. Cada usuário recebe uma resposta com formato diferente, demonstrando a capacidade de personalização.
-
-### CORS
-Configurei o django-cors-headers para permitir requisições do frontend (localhost:3000) ao backend (localhost:8000), essencial para o desenvolvimento local.
-
-### Estilização
-Optei por CSS puro com um design moderno e responsivo, utilizando gradientes e transições para melhorar a experiência do usuário. As cores foram escolhidas para criar uma interface profissional e agradável.
-
-## ✅ Requisitos Atendidos
-
-- ✅ Login mockado com seleção de usuário (A ou B)
-- ✅ Estado do usuário gerenciado no React
-- ✅ Tela de chat funcional com envio de mensagens
-- ✅ API Django que salva mensagens no banco de dados
-- ✅ Respostas mockadas personalizadas por usuário
-- ✅ Exibição de mensagens e respostas na interface
-- ✅ Tela de histórico com filtragem por usuário
-- ✅ Histórico atualizado conforme o usuário selecionado
-- ✅ Código organizado e bem documentado
-- ✅ README.md completo com instruções
-
-## 📝 Observações
-
 - O projeto utiliza SQLite por ser o banco de dados padrão do Django, ideal para desenvolvimento e testes
 - As respostas são simuladas no backend, mas a estrutura permite fácil integração com sistemas reais de IA ou chatbot
 - O código está preparado para expansão futura, como adicionar autenticação real, mais tipos de usuários, ou integração com APIs externas
 
-## 👨‍💻 Autor
+### Modelagem no Django
 
-Desenvolvido como parte do processo seletivo da 4blue.
+Usei apenas um model principal, Message, contendo:
 
----
+- sender (A ou B)
+- content (mensagem do usuário)
+- response (resposta mockada gerada pela API)
+- timestamp
 
-**Contato**: marcelosilva@4blue.com.br
+Mantive tudo em um único model para deixar o backend simples, direto e perfeito para o requisito principal: filtrar mensagens por usuário.
+
+### Estado no React
+
+Gerenciei o estado do usuário ativo (A ou B) no componente principal (App.js) com useState.
+
+Esse estado é passado para:
+
+- Tela de Chat → para enviar mensagens
+- Tela de Histórico → para buscar apenas as mensagens do usuário selecionado
+
+Cada página mantém apenas o estado que ela realmente precisa, mantendo o fluxo simples e claro.
